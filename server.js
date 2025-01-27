@@ -25,8 +25,11 @@ app.post("/generate-podcast", async (req, res) => {
     // Initialize the model
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
+    //Modify the prompt so that it creates a podcast in conversation format
+    const conversationPodcast = `Write a podcast where two hosts or more (you can name the hosts) discuss the following topic: "${prompt}". The hosts should be curious asking questions, be knowledgeable when answering and the conversation should feel natural and engaging.`
+
     // Generate content
-    const result = await model.generateContent(prompt);
+    const result = await model.generateContent(conversationPodcast);
 
     // Send the response back to the client
     res.json({
