@@ -35,8 +35,16 @@ const storage = multer.diskStorage({
   }
 });
 
-// Initialize multer upload middleware
-const upload = multer({ storage });
+// Initialize multer upload middleware and making it sure that it only accepts audio files
+const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith("audio/")) {
+      return cb(new Error("Only audio files are allowed"), false);
+    }
+    cb(null, true);
+  }
+});
 
 // Route to handle audio uploads
 app.post('/upload-audio', upload.single('audioFile'), (req, res) => {
@@ -75,14 +83,14 @@ app.post("/generate-podcast", async (req, res) => {
   }
 });
 
-// // Start the server
-// app.listen(PORT, () => {
-//   console.log(`Server is running on http://localhost:${PORT}`);
-// });
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
 
-async function testSpeech() {
-  const client = new speech.SpeechClient();
-  console.log("Google Cloud Speech-to-Text is set up correctly!");
-}
+// async function testSpeech() {
+//   const client = new speech.SpeechClient();
+//   console.log("Google Cloud Speech-to-Text is set up correctly!");
+// }
 
-testSpeech();
+// testSpeech();
