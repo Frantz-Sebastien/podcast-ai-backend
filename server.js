@@ -4,6 +4,7 @@ const multer = require("multer");
 const fs = require('fs');
 const path = require('path');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+// const speech = require('google-cloud/speech') The dependency that I will install
 require("dotenv").config(); // Load environment variables
 
 const app = express();
