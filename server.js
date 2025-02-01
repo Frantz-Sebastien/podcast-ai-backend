@@ -4,7 +4,7 @@ const multer = require("multer");
 const fs = require('fs');
 const path = require('path');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-// const speech = require('google-cloud/speech') The dependency that I will install
+const speech = require('@google-cloud/speech')
 require("dotenv").config(); // Load environment variables
 
 const app = express();
@@ -75,7 +75,14 @@ app.post("/generate-podcast", async (req, res) => {
   }
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+// // Start the server
+// app.listen(PORT, () => {
+//   console.log(`Server is running on http://localhost:${PORT}`);
+// });
+
+async function testSpeech() {
+  const client = new speech.SpeechClient();
+  console.log("Google Cloud Speech-to-Text is set up correctly!");
+}
+
+testSpeech();
