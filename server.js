@@ -62,10 +62,19 @@ async function convertM4AToWav(inputPath) {
 }
 
 // Initialize multer upload middleware, ensuring it only accepts audio files
-const allowedMimeTypes = ["audio/wav", "audio/mpeg", "audio/flac", "audio/mp4"];
+const allowedMimeTypes = [
+  "audio/wav",
+  "audio/mpeg",  // MP3
+  "audio/flac",
+  "audio/mp4",    // Standard M4A MIME type
+  "audio/x-m4a",  // Alternative M4A MIME type (macOS, iOS)
+  "audio/m4a",    // Another M4A variation
+  "video/mp4"     // Some systems label M4A as MP4
+];
 const upload = multer({
   storage,
   fileFilter: (req, file, cb) => {
+    console.log(`File uploaded: ${file.originalname}, MIME type: ${file.mimetype}`);
     if (!allowedMimeTypes.includes(file.mimetype)) {
       return cb(new Error("Only WAV, MP3, FLAC, and M4A audio files are allowed"), false);
     }
