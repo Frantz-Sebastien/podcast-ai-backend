@@ -132,7 +132,12 @@ app.post("/transcribe-audio", async (req, res) => {
 
     // Convert M4A to WAV if needed
     if (filePath.endsWith(".m4a")) {
-      filePath = await convertM4AToWav(filePath);
+      try {
+        filePath = await convertM4AToWav(filePath);
+        await fs.access(filePath); // Double-check the new .wav file exists
+      } catch (error) {
+        return res.status(500).json({ error: "Failed to convert M4A to WAV." });
+      }
     }
 
     const client = new speech.SpeechClient();
@@ -144,12 +149,15 @@ app.post("/transcribe-audio", async (req, res) => {
       config: {
         encoding: "LINEAR16",
         sampleRateHertz: 16000,
-        languageCode: "en-US",
+        languageCode: process.env.GOOGLE_CLOUD_LANGUAGE || "en-US", // Default to English
       },
     };
 
     const [response] = await client.recognize(request);
     const transcription = response.results.map(r => r.alternatives[0].transcript).join("\n");
+
+    // ✅ Delete the file after transcription
+    deleteFile(filePath);
 
     res.json({ success: true, transcription });
 
@@ -158,6 +166,7 @@ app.post("/transcribe-audio", async (req, res) => {
     res.status(500).json({ error: "Failed to transcribe audio." });
   }
 });
+
 
 
 // Start the server
